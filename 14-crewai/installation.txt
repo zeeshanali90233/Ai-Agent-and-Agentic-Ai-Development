@@ -1,0 +1,9 @@
+1--- CHeck UV is installed not not  
+    open cmd and type ---             uv --version
+    if the respnse comes all good if not then install
+
+2 -- Install UV https://docs.astral.sh/uv/getting-started/installation/#standalone-installer
+
+3--- Install crew ai and make project https://docs.crewai.com/en/installation
+
+crewai create crew <your_project_name>
