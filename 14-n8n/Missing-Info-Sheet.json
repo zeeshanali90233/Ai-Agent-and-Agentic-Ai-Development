@@ -1,0 +1,295 @@
+{
+  "name": "MissingInfoSetting",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a2ecb9a6-2558-4099-bb35-4544361579bb",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1xF3w2KokegLrj4GHeu-CtUhUX8-X2g2oBfOCiWFjExA",
+          "mode": "list",
+          "cachedResultName": "LeadInfoComplete",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xF3w2KokegLrj4GHeu-CtUhUX8-X2g2oBfOCiWFjExA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xF3w2KokegLrj4GHeu-CtUhUX8-X2g2oBfOCiWFjExA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "a759e35d-1558-4b76-97f4-c39a609ce72a",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3gLkW8c0MdRFtDU7",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.agify.io/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.Name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "742ca14a-7f79-46ef-803f-818704d45c9e",
+      "name": "Age"
+    },
+    {
+      "parameters": {
+        "url": "https://api.genderize.io/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "da22b43f-9e93-4ef5-a094-e0721655271c",
+      "name": "Gender"
+    },
+    {
+      "parameters": {
+        "url": "https://api.nationalize.io/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        0
+      ],
+      "id": "0068372f-243f-40d6-bb35-c3f18a0ffbb6",
+      "name": "Nationality"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1xF3w2KokegLrj4GHeu-CtUhUX8-X2g2oBfOCiWFjExA",
+          "mode": "list",
+          "cachedResultName": "LeadInfoComplete",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xF3w2KokegLrj4GHeu-CtUhUX8-X2g2oBfOCiWFjExA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xF3w2KokegLrj4GHeu-CtUhUX8-X2g2oBfOCiWFjExA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Age": "={{ $('Age').item.json.age }}",
+            "Gender": "={{ $('Gender').item.json.gender }}",
+            "Country": "={{ $json.country[0].country_id }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Sr#",
+              "displayName": "Sr#",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "503a8507-c194-4738-8119-cc11b0077748",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3gLkW8c0MdRFtDU7",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Age",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Age": {
+      "main": [
+        [
+          {
+            "node": "Gender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gender": {
+      "main": [
+        [
+          {
+            "node": "Nationality",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nationality": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1a3d0f5a-80a1-4c8a-ab52-001fdcbbe684",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ba605742ea2198e39d8cc6047f29fc7b2e0b03a8d682a3c7daf4b799d6c52c53"
+  },
+  "id": "Es6guIsrPlaqdZCV",
+  "tags": []
+}

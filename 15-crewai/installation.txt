@@ -7,3 +7,5 @@
 3--- Install crew ai and make project https://docs.crewai.com/en/installation
 
 crewai create crew <your_project_name>
+
+4-- when project created , run it using 

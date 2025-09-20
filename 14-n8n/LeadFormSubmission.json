@@ -1,0 +1,207 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "12ueBbKwxkvLRMa7Pa3MB4rhafU0c_RsCnBdltRTpE5w",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12ueBbKwxkvLRMa7Pa3MB4rhafU0c_RsCnBdltRTpE5w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12ueBbKwxkvLRMa7Pa3MB4rhafU0c_RsCnBdltRTpE5w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('On form submission').item.json['What is your Name'] }}",
+            "Email": "={{ $('On form submission').item.json['What is your Email'] }}",
+            "City": "={{ $('On form submission').item.json['What is your City'] }}",
+            "Source": "={{ $('On form submission').item.json['From where you get to know us'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        16
+      ],
+      "id": "f266276e-b696-4ff4-9ee1-385082dc02e3",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LFfy83DkVWznhV4v",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Contact Us",
+        "formDescription": "We will get back to you soon",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your Name",
+              "placeholder": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your Email",
+              "placeholder": "Email"
+            },
+            {
+              "fieldLabel": "What is your City",
+              "placeholder": "City",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "From where you get to know us",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Website"
+                  },
+                  {
+                    "option": "Facebook"
+                  },
+                  {
+                    "option": "Google"
+                  },
+                  {
+                    "option": "Chatgpt"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -272,
+        16
+      ],
+      "id": "86c7985b-c8fe-4cdf-a959-9b418971ea73",
+      "name": "On form submission",
+      "webhookId": "bebc40b8-9a5a-401f-a8bf-43c3e054aa89"
+    },
+    {
+      "parameters": {
+        "sendTo": "zeeshanaliofficialdev@gmail.com",
+        "subject": "=A New Lead Comes from  {{ $json['From where you get to know us'] }}",
+        "message": "=A New Lead has come with following details  \nName: {{ $json['What is your Name'] }}\nEmail: {{ $json['What is your Email'] }}\nCity: {{ $json['What is your City'] }}\nSource: {{ $json['From where you get to know us'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -64,
+        16
+      ],
+      "id": "c71ba89d-e919-481c-b22c-e92a63e7ee0b",
+      "name": "Send a message",
+      "webhookId": "aaff7914-7bf7-4746-8397-8f4d08b21f97",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mKpNCHqiMCBugdJH",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0156ff88-c412-459f-972c-7931a31228e4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ba605742ea2198e39d8cc6047f29fc7b2e0b03a8d682a3c7daf4b799d6c52c53"
+  },
+  "id": "yZ0DRknOekrjRJiK",
+  "tags": []
+}

@@ -1,0 +1,221 @@
+{
+  "name": "CVGradeAIAUTOMATIOn",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "CV SUBMISSION",
+        "formDescription": "Submit your CV here , we will review it ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Attach Your CV",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Select your Domain of Interest",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "AI/ML"
+                  },
+                  {
+                    "option": "Web/Mobile App"
+                  },
+                  {
+                    "option": "Cloud Computing"
+                  },
+                  {
+                    "option": "Blockchain"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f148dfc5-aeb2-47a8-b2db-6e64aaabe313",
+      "name": "On form submission",
+      "webhookId": "b5128703-2eb6-4f5e-b899-ab74b1a1ec8e"
+    },
+    {
+      "parameters": {
+        "operation": "Extract Resources",
+        "binaryPropertyName": "Attach_Your_CV",
+        "docName": "Zeeshan_Ali_AI_Engineer.pdf",
+        "extractionOptions": {},
+        "advancedOptions": {}
+      },
+      "type": "n8n-nodes-pdf4me.PDF4me",
+      "typeVersion": 1,
+      "position": [
+        336,
+        96
+      ],
+      "id": "08508f39-8e91-4939-97d0-9adde8d232d1",
+      "name": "PDF4me",
+      "credentials": {
+        "pdf4meApi": {
+          "id": "z2rBOfrU3lFMMi0A",
+          "name": "PDF4ME account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=CV CONTENT: {{ $json.texts }}\nDOMAIN OF INTEREST SELECTED: {{ $('On form submission').item.json['Select your Domain of Interest'] }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "You are an expert HR assistant and career advisor, analyze the attached CV content against the user’s selected domain of interest, score the CV from 1 to 10 for relevance, and provide exactly a two-line professional remark about the candidate’s suitability.",
+          "maxOutputTokens": 90
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        592,
+        80
+      ],
+      "id": "2fc078f6-ff88-4acd-ad7f-0542da86a102",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jgCizrgqrt0ld9tj",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "zeeshanaliofficialdev@gmail.com",
+        "subject": "CV REVIEW",
+        "emailType": "text",
+        "message": "={{ $json.content.parts[0].text }}",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=Attach_Your_CV"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1216,
+        -192
+      ],
+      "id": "198f6ecf-ea7d-4268-8744-cf7f08d471d4",
+      "name": "Send a message",
+      "webhookId": "98bb8fce-12b5-47db-bcbf-6245a8fdd12a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "X6cIx91NW2qejmWj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        912,
+        -176
+      ],
+      "id": "08d637c9-c5a1-493f-80e2-adc2b3c3121b",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "PDF4me",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "PDF4me": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "95fc6781-9a63-4f5c-9e76-0c914ce0c938",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ba605742ea2198e39d8cc6047f29fc7b2e0b03a8d682a3c7daf4b799d6c52c53"
+  },
+  "id": "FKPraFIyxUWnjclU",
+  "tags": []
+}

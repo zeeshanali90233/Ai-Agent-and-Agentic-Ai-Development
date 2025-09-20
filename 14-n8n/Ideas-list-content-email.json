@@ -1,0 +1,212 @@
+{
+  "name": "AIIDEAPDFEMAILAUTOMATION",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "207dadb4-d1fa-44d1-9ca5-945f81b41c8a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sIUi8ru4P45WXZ41pw3G5JaJDxBthWZOecYQgq7dy78",
+          "mode": "list",
+          "cachedResultName": "IdeasList",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sIUi8ru4P45WXZ41pw3G5JaJDxBthWZOecYQgq7dy78/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sIUi8ru4P45WXZ41pw3G5JaJDxBthWZOecYQgq7dy78/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Date",
+              "lookupValue": "={{ (() => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` })()\n}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "508e07a8-a748-4476-a328-46dd546f906b",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3gLkW8c0MdRFtDU7",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.Idea }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "You are an expert blog writer. I will provide you with a blog idea, and you will write a clear, beginner-friendly blog post. Structure the blog with multiple headings and subheadings. Start with simple explanations, then expand into deeper points, tips, and insights. Use examples, bullet points, and short paragraphs, and end with a simple conclusion or key takeaway. Output strictly the HTML body code, starting with <body> and ending with </body>, and do not include anything before or after the <body> tags.",
+          "maxOutputTokens": 500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "0a05563f-88a7-43f6-8e7b-37928330595c",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jgCizrgqrt0ld9tj",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Convert HTML To PDF",
+        "inputDataType": "htmlCode",
+        "htmlCode": "={{ $json.content.parts[0].text }}",
+        "indexFilePath": "index.html",
+        "outputFileName": "={{ $('Get row(s) in sheet').item.json.Idea }}.pdf"
+      },
+      "type": "n8n-nodes-pdf4me.PDF4me",
+      "typeVersion": 1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "c797b3aa-7ac8-4eea-8845-72d2ca6ff931",
+      "name": "PDF4me",
+      "credentials": {
+        "pdf4meApi": {
+          "id": "z2rBOfrU3lFMMi0A",
+          "name": "PDF4ME account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "zeeshanaliofficialdev@gmail.com",
+        "subject": "=Content for  {{ $('Get row(s) in sheet').item.json.Idea }}",
+        "message": "=Hello,  I have generated the content for \"{{ $('Get row(s) in sheet').item.json.Idea }}\". Please check the attached PDF for details.  Best regards,",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=data"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        976,
+        0
+      ],
+      "id": "e1127eba-7493-4126-88d1-824aa00481af",
+      "name": "Send a message",
+      "webhookId": "03ffc396-51c7-46ea-9ccd-01f36c05fb77",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "X6cIx91NW2qejmWj",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "PDF4me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF4me": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4cb00c82-100f-48eb-93b9-d4ae856149fc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ba605742ea2198e39d8cc6047f29fc7b2e0b03a8d682a3c7daf4b799d6c52c53"
+  },
+  "id": "xC3KH7mQRzPLYOPV",
+  "tags": []
+}
