@@ -21,7 +21,7 @@ mcp_tools = asyncio.run(get_all_tools())
 print(f"Available MCP tools: {[tool.name for tool in mcp_tools]}")
 
 llm = ChatGoogleGenerativeAI(
-    google_api_key="AIzaSyA-AxGGObm4t_2dOGhtLx5aYv6AeKjfjfY",
+    google_api_key="API_KEY",
     model="gemini-2.5-flash",
     temperature=0,
 )
