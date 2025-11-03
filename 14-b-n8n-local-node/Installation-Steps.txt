@@ -1,0 +1,14 @@
+Documentation Link: https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/
+
+1) First Open Terminal Npm initiaze it: npm init
+2) Install n8n: npm install n8n
+
+3) Open your package.json and check project name and then run the command: # In the nodes directory within your n8n installation
+# node-package-name is the name from the package.json: 
+
+npm link <node-package-name>
+
+like : npm link n8n
+
+4) Then run command: npx n8n start
+
