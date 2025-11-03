@@ -1,0 +1,16 @@
+{
+  "name": "n8n-local",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "n8n start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "n8n": "^1.117.3"
+  }
+}
