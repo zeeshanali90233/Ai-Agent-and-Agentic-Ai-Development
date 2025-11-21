@@ -1,4 +1,4 @@
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 
@@ -16,8 +16,8 @@ llm = ChatGoogleGenerativeAI(
     max_retries=2,
 )
 
-helping_agent = create_react_agent(
+helping_agent = create_agent(
     model=llm,
     tools=[get_weather],
-    prompt="You are a helpful assistant"
+    system_prompt="You are a helpful assistant"
 )

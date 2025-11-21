@@ -1,6 +1,6 @@
 
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.checkpoint.memory import InMemorySaver
 
@@ -13,13 +13,12 @@ llm = ChatGoogleGenerativeAI(
     max_retries=2
 )
 
-
 # Create an agent with Checkpointer Memory
 memory = InMemorySaver()
 
-helpfull_assistant = create_react_agent(
+helpfull_assistant = create_agent(
     model=llm,
     tools=[],
-    prompt="You are a helpful assistant",
+    system_prompt="You are a helpful assistant",
     checkpointer=memory
 )

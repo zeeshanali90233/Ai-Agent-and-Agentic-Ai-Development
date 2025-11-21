@@ -2,7 +2,7 @@ import asyncio
 import json
 from fastmcp import Client
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain.tools import BaseTool
 
@@ -57,11 +57,11 @@ tools = [
     for tool in mcp_tools
 ]
 
-helpful_assistant = create_react_agent(
+helpful_assistant = create_agent(
     model=llm,
     tools=tools,
     checkpointer=memory,
-    prompt="You are a helpful assistant."
+    system_prompt="You are a helpful assistant."
 )
 
 user_input = "Calculate compound interest for principal 1000, rate 0.05, time 10 years."
