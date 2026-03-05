@@ -20,9 +20,10 @@ async def get_all_tools():
 mcp_tools = asyncio.run(get_all_tools())
 print(f"Available MCP tools: {[tool.name for tool in mcp_tools]}")
 
+
 llm = ChatGoogleGenerativeAI(
-    google_api_key="",
-    model="gemini-2.5-flash",
+    google_api_key="APIKEY",
+    model="gemini-2.5-flash-lite",
     temperature=0,
 )
 
@@ -64,7 +65,7 @@ helpful_assistant = create_agent(
     system_prompt="You are a helpful assistant."
 )
 
-user_input = "Calculate compound interest for principal 1000, rate 0.05, time 10 years."
+user_input = "Calculate Sum of 5+4 and then send email to zeeshan@gmail.com the result"
 response = helpful_assistant.invoke(
     {"messages": [{"role": "user", "content": user_input}]},
     config={"configurable": {"thread_id": "user123"}}

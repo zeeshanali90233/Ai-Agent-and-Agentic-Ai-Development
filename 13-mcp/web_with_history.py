@@ -1,5 +1,5 @@
 import streamlit as st
-from assistant import helpful_assistant
+from agent import helpful_assistant
 
 
 st.title("Talk to Agent")

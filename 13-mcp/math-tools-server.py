@@ -14,13 +14,9 @@ def greet(name: str) -> str:
     return f"Hello, {name}!"
 
 @mcp.tool()
-def compound_interest_calculator(principal: float, rate: float, time: float) -> float:
-    """Calculate compound interest."""
-    return principal * (1 + rate) ** time
-
-@mcp.tool()
 def send_email(to: str, subject: str, body: str) -> str:
     """Send a greeting email."""
+    
     return f"Sent email to {to} with subject '{subject}' and body '{body}'!"
 
 if __name__ == "__main__":
