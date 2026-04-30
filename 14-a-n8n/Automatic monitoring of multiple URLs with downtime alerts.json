@@ -1,0 +1,512 @@
+{
+  "name": "Automatic monitoring of multiple URLs with downtime alerts",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "2744df51-ca51-4c01-9a49-b29c5b27f7bf",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        416,
+        560
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urls",
+        "options": {}
+      },
+      "id": "cae73f18-028e-4cb5-aee2-a18768c5367e",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        896,
+        464
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"urls\": {\n    \"URL 2\": \"https://example.com\",\n    \"URL 1\": \"https://google.es\",\n    \"URL 4\": \"https://github.com\",\n    \"URL 3\": \"https://n8n.io\",\n    \"URL 5\": \"https://n8niouou.io\",\n    \"URL 6\": \"https://n8niopuou.io\"\n  }\n}",
+        "options": {}
+      },
+      "id": "398d41cf-c555-44d7-bf08-2732a47a18e7",
+      "name": "URLs",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        672,
+        464
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1X1Ji6g1IR7VO9bSFOoD6Qu06GNE4l1diiIhB05Fqtdk",
+          "mode": "list",
+          "cachedResultName": "Site Live Check",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1X1Ji6g1IR7VO9bSFOoD6Qu06GNE4l1diiIhB05Fqtdk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1X1Ji6g1IR7VO9bSFOoD6Qu06GNE4l1diiIhB05Fqtdk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "URL": "={{ $('Split Out').item.json.urls }}",
+            "Error": "True",
+            "Check Time": "=${{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Success",
+              "displayName": "Success",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error",
+              "displayName": "Error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Check Time",
+              "displayName": "Check Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c99e1ec7-0b11-4278-8f97-d6b9cef798cd",
+      "name": "Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1632,
+        832
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleApi": {
+          "id": "nIAdxNH0An6D10k8",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "01fd1dbc-ca4c-4a94-abbc-e1d67a7dd775",
+      "name": "Bucle URLs",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        1120,
+        464
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {},
+      "id": "760cea59-8d84-4abf-b91a-c277ca122420",
+      "name": "Run trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        416,
+        368
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## How it works (P1)\nBefore the loop, you enter the URLs to scan in the \"URLs\" stream, then start the trigger either manually or scheduled.",
+        "width": 260,
+        "color": 5
+      },
+      "id": "5df0c197-037d-46da-bc4b-fd7ed514bbe5",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        688
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## How it works (P2)\nStart a loop for each URL entered, adding the status to a Google Sheet, then collect the status of each URL, filter out the crashes, and send an email with the crashes.",
+        "height": 180,
+        "width": 260
+      },
+      "id": "4367f7ee-0b74-476b-84b4-202bc3d909e7",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1792,
+        288
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Enter URLs to scan here",
+        "height": 220,
+        "width": 180,
+        "color": 5
+      },
+      "id": "4cb90ac4-9808-413a-8fb0-c7ed0db631bb",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### As a trigger you could also implement webhook or MCP",
+        "height": 480,
+        "width": 180,
+        "color": 5
+      },
+      "id": "040739ca-50d8-4d77-bf3a-c7406bd60410",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        368,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2384,
+        592
+      ],
+      "id": "98a7be77-8b1e-42a2-a945-a1205263805a",
+      "placeholder": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Split Out').item.json.urls }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1328,
+        560
+      ],
+      "id": "f4251df7-d4fc-488b-b56a-ca2bbd4c3a9b",
+      "name": "HTTP Request",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1X1Ji6g1IR7VO9bSFOoD6Qu06GNE4l1diiIhB05Fqtdk",
+          "mode": "list",
+          "cachedResultName": "Site Live Check",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1X1Ji6g1IR7VO9bSFOoD6Qu06GNE4l1diiIhB05Fqtdk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1X1Ji6g1IR7VO9bSFOoD6Qu06GNE4l1diiIhB05Fqtdk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "URL": "={{ $('Split Out').item.json.urls }}",
+            "Success": "True",
+            "Check Time": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Success",
+              "displayName": "Success",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error",
+              "displayName": "Error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Check Time",
+              "displayName": "Check Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1536,
+        560
+      ],
+      "id": "a8b73abd-13e1-49d0-a6a4-a98d73616fe5",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "nIAdxNH0An6D10k8",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "field": "Success"
+            },
+            {
+              "field": "Error"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        1328,
+        368
+      ],
+      "id": "5972c5c6-8bae-4c2c-b4dd-a3c9d1ae6f25",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "sendTo": "zeeshanali90233@gmail.com",
+        "subject": "Site Live Check Report",
+        "message": "=Below is the Report , Success: {{ $json.count_Success }}\n\nError: {{ $json.count_Error }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1536,
+        368
+      ],
+      "id": "c931cd3d-ee3a-43b3-ba29-44b8fbaa5831",
+      "name": "Send a message",
+      "webhookId": "96e4794a-acfb-4f38-93c3-07547968e817",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "a5dkTdtPhTBYAdUi",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "URLs": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error": {
+      "main": [
+        [
+          {
+            "node": "Bucle URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Bucle URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle URLs": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run trigger": {
+      "main": [
+        [
+          {
+            "node": "URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Bucle URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2248ed23-6176-4854-8f25-944f11ed0796",
+  "meta": {
+    "templateId": "5298",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4a9e93f184ab8cffe5b1408d81b980c3ac3b7d5ba12680c58f8f90e349f28482"
+  },
+  "id": "UCNU1ntYyx7RlVM6",
+  "tags": []
+}
