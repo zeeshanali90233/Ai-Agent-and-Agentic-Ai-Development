@@ -1,0 +1,24 @@
+{
+  "books": [
+    {
+      "name": "A Smarter Way To Learn Dialogflow ES | By Zeeshan Ali",
+      "publicURL": "https://p2pclouds-books.s3.ap-south-1.amazonaws.com/a-smarter-way-to-learn-dialogflow-book-by-zeeshan-ali.pdf"
+    },
+    {
+      "name": "HTML & CSS Book | John Ducket",
+      "publicURL": "https://p2pclouds-books.s3.ap-south-1.amazonaws.com/jon-duckett-html-css-book-from-zeeshan-ali-website.pdf"
+    },
+    {
+      "name": "JavaScript Beginner to Professional | Svekis",
+      "publicURL": "https://p2pclouds-books.s3.ap-south-1.amazonaws.com/js-beginner-to-professional-book-from-zeeshan-ali-website.pdf"
+    },
+    {
+      "name": "N8n Guide: 16 Game Changing Lessons | LEANDRO CALADO",
+      "publicURL": "https://p2pclouds-books.s3.ap-south-1.amazonaws.com/n8n-guide-16-game-changing-lessons-from-zeeshanali-website.pdf"
+    },
+    {
+      "name": "Python For Everyone | Cay Horstmann",
+      "publicURL": "https://p2pclouds-books.s3.ap-south-1.amazonaws.com/python-for-everyone-cay-horstmann-from-zeeshanali-website.pdf"
+    }
+  ]
+}
