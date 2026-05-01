@@ -1,0 +1,435 @@
+{
+  "name": "My workflow 7",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        64
+      ],
+      "id": "ebaf537e-3599-4728-8328-aa074d73c790",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        192,
+        272
+      ],
+      "id": "ffe30af0-1a04-4dd7-b806-71acea25d157",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "5a9hIn6HXVFbyPvV",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        736,
+        176
+      ],
+      "id": "6203c161-9fc7-40ab-b423-23753f52de40",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "5a9hIn6HXVFbyPvV",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1YSRA-MWW2I6skr2tXk27ntwTpfNLqklk4f41srYeNww",
+          "mode": "list",
+          "cachedResultName": "Blog For My Adsense Site",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YSRA-MWW2I6skr2tXk27ntwTpfNLqklk4f41srYeNww/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YSRA-MWW2I6skr2tXk27ntwTpfNLqklk4f41srYeNww/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Date",
+              "lookupValue": "={{ new Date().toISOString().split('T')[0] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        -48
+      ],
+      "id": "5474b5b4-a37f-461b-9235-07d10fc0c871",
+      "name": "Read Blog Idea",
+      "credentials": {
+        "googleApi": {
+          "id": "nIAdxNH0An6D10k8",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert SEO specialist.\n\nBased on the following blog idea:\n{{ $json['Idea Prompt '] }}\n\nIMPORTANT SEARCH RULES:\n- Use the available search tool for market research (do NOT assume a specific tool name)\n- You are allowed a maximum of 5 total search queries\n- After 3 searches, STOP all search activity immediately\n- Do NOT repeat similar searches or enter a loop\n- Use search efficiently and only when necessary\n\nSTEP 1: MARKET RESEARCH (MAX 3 SEARCHES)\n- Analyze top-ranking results for this topic\n- Identify top 3 ranking blog titles\n- Extract common keywords and patterns\n- Understand search intent (informational, transactional, etc.)\n- Identify gaps or opportunities in existing content\n\nSTEP 2: TITLE GENERATION\nUsing insights from the research, generate a highly optimized blog title.\n\nTITLE GUIDELINES:\n- Keep under 60 characters\n- Include primary keyword naturally\n- Match current search intent\n- Use power words if relevant\n- Make it engaging and click-worthy\n- Ensure it is SEO-friendly and user-focused\n- Do NOT copy existing titles — create a unique variation\n- Avoid clickbait or misleading wording\n\nOUTPUT RULE:\nReturn ONLY the final blog title (no explanation, no extra text).",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        80
+      ],
+      "id": "d336c5a3-a696-4255-a929-30170d1bce30",
+      "name": "Title Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert SEO content writer and HTML formatter.\n\nBased on the following blog title:\n{{ $json.output }}\n\nIMPORTANT SEARCH RULES:\n- Use the available search tool for SERP (do NOT assume any specific tool name)\n- You are allowed a maximum of 5 total search queries\n- Perform SERP analysis efficiently (do NOT repeat or loop searches)\n- After 5 searches, STOP all search activity immediately\n- Do NOT re-run similar queries or enter repeated SERP cycles\n\nSTEP 1: SERP ANALYSIS (MAX 5 SEARCHES ONLY)\n- Analyze top-ranking blog posts for this topic\n- Identify common keywords, structure, and search intent\n- Understand what type of content is currently ranking\n- Identify content gaps and improvement opportunities\n\nSTEP 2: CONTENT GENERATION\nUsing insights from SERP analysis, generate a complete, high-quality blog post in clean HTML format.\n\nHTML REQUIREMENTS:\n- Use proper HTML structure: <h1>, <h2>, <h3>, <p>, <ul>, <li>, <strong>\n- Start with an engaging introduction\n- Break content into clear sections with headings\n- Include bullet points where useful\n- Add a conclusion at the end\n- Keep paragraphs short and readable\n- Naturally include relevant keywords based on SERP insights (SEO optimized)\n- Do NOT include <html>, <head>, or <body> tags\n- Do NOT include CSS or inline styles\n- Ensure content is unique, informative, and user-friendly\n- Improve upon competitor content (better clarity, depth, and structure)\n\nOUTPUT RULE:\nReturn ONLY valid HTML content. No explanations, no extra text.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        768,
+        -48
+      ],
+      "id": "98c48995-6cbb-449d-8f2f-5994e30e1a10",
+      "name": "Content Agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://test.p2pclouds.com/wp-json/wp/v2/posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $('Title Agent').item.json.output }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "status",
+              "value": "publish"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1200,
+        80
+      ],
+      "id": "0d571f0b-a469-45f5-8ccf-7d5eade06916",
+      "name": "Add Blog to Site Request",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "3UDos6PMDwEItI6G",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YSRA-MWW2I6skr2tXk27ntwTpfNLqklk4f41srYeNww",
+          "mode": "list",
+          "cachedResultName": "Blog For My Adsense Site",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YSRA-MWW2I6skr2tXk27ntwTpfNLqklk4f41srYeNww/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YSRA-MWW2I6skr2tXk27ntwTpfNLqklk4f41srYeNww/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sr": "={{ $('Read Blog Idea').item.json.Sr }}",
+            "Published Link": "={{ $json.guid.rendered }}",
+            "Published At": "={{$now}}"
+          },
+          "matchingColumns": [
+            "Sr"
+          ],
+          "schema": [
+            {
+              "id": "Sr",
+              "displayName": "Sr",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Idea Prompt ",
+              "displayName": "Idea Prompt ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Published Link",
+              "displayName": "Published Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Published At",
+              "displayName": "Published At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1472,
+        -16
+      ],
+      "id": "91d3d8f0-ec11-4dc1-9ac5-ce5721f3091b",
+      "name": "Add Blog Link in Sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "nIAdxNH0An6D10k8",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        480,
+        368
+      ],
+      "id": "54ff8502-bdec-426b-b4b2-134d78fccf39",
+      "name": "Title SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "iz5LcFMaJnhPQVWh",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        992,
+        192
+      ],
+      "id": "f05b3ffc-8f29-4bcf-96dc-a059bf8d57fe",
+      "name": "Content SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "iz5LcFMaJnhPQVWh",
+          "name": "SerpAPI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Blog Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Title Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Blog Idea": {
+      "main": [
+        [
+          {
+            "node": "Title Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Title Agent": {
+      "main": [
+        [
+          {
+            "node": "Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Agent": {
+      "main": [
+        [
+          {
+            "node": "Add Blog to Site Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Blog to Site Request": {
+      "main": [
+        [
+          {
+            "node": "Add Blog Link in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Title SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Title Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fe54da40-c8c9-40ec-b8a7-606e3b4a93d9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4a9e93f184ab8cffe5b1408d81b980c3ac3b7d5ba12680c58f8f90e349f28482"
+  },
+  "id": "CXa8V5D85123PFbQ",
+  "tags": []
+}
