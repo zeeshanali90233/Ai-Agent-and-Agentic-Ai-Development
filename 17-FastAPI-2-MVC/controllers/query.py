@@ -13,3 +13,7 @@ def get_query_answer(q: str):
     model="gemini-2.5-flash", contents=q
     )
     return {q: response.text}
+
+
+# pip install dotenv
+# pip install google-genai

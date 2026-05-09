@@ -1,0 +1,251 @@
+{
+  "name": "Automatic monitoring of multiple URLs with downtime alerts",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "768169c0-e713-493b-97d9-88ba1cb41b0c",
+      "name": "When chat message received",
+      "webhookId": "dfc77d45-a970-4da2-ab9f-a7e783bf8206"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a skillustad assistant, Convince , Enroll User and Guide about Courses if Asked using the Tools\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2a4d34f6-92da-4f55-b7aa-c754085d8835",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        272
+      ],
+      "id": "63fe2951-e6d6-4503-a3d1-9dc65a0d37c7",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "5a9hIn6HXVFbyPvV",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        320
+      ],
+      "id": "78d36800-da44-4feb-8d28-09010a9213ac",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get Courses Information from Google Sheet",
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1KvY8825NX-WGXm-wrWtrhswsIt27Ivu6IA2hnMZ5IrU",
+          "mode": "list",
+          "cachedResultName": "Course Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KvY8825NX-WGXm-wrWtrhswsIt27Ivu6IA2hnMZ5IrU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1313047854,
+          "mode": "list",
+          "cachedResultName": "Courses Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KvY8825NX-WGXm-wrWtrhswsIt27Ivu6IA2hnMZ5IrU/edit#gid=1313047854"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        208
+      ],
+      "id": "bafcf3b7-d415-47f8-86cc-6f58d5b3d7fd",
+      "name": "Courses Data ",
+      "credentials": {
+        "googleApi": {
+          "id": "nIAdxNH0An6D10k8",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Save Student Lead to Google Sheet ",
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1KvY8825NX-WGXm-wrWtrhswsIt27Ivu6IA2hnMZ5IrU",
+          "mode": "list",
+          "cachedResultName": "Course Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KvY8825NX-WGXm-wrWtrhswsIt27Ivu6IA2hnMZ5IrU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KvY8825NX-WGXm-wrWtrhswsIt27Ivu6IA2hnMZ5IrU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Contact Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Contact_Number', ``, 'string') }}",
+            "Course": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Course', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contact Number",
+              "displayName": "Contact Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Course",
+              "displayName": "Course",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        576,
+        272
+      ],
+      "id": "0552eed4-99fd-4f67-96f6-1f7a0b830115",
+      "name": "Save Lead to CRM",
+      "credentials": {
+        "googleApi": {
+          "id": "nIAdxNH0An6D10k8",
+          "name": "Google Service Account account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Courses Data ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead to CRM": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c648e1b8-cc43-4fc2-ae09-73c56af1f18f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4a9e93f184ab8cffe5b1408d81b980c3ac3b7d5ba12680c58f8f90e349f28482"
+  },
+  "id": "knA8dgVIbdB6rrJe",
+  "tags": []
+}
