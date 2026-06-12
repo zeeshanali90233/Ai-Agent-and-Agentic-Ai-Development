@@ -14,8 +14,13 @@ def greet(name: str) -> str:
     return f"Hello, {name}!"
 
 @mcp.tool()
+def send_lead_to_crm(name: str) -> str:
+    """Send lead information to CRM."""
+    return f"Lead {name} sent to CRM!"
+
+@mcp.tool()
 def send_email(to: str, subject: str, body: str) -> str:
-    """Send a greeting email."""
+    """Send an email."""
     
     return f"Sent email to {to} with subject '{subject}' and body '{body}'!"
 
