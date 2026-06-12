@@ -15,15 +15,15 @@
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.3,
       "position": [
-        0,
-        0
+        -416,
+        96
       ],
-      "id": "73aef5c8-7260-4972-8006-fb32d539f41e",
+      "id": "36f60826-2492-4200-a338-b371ab3dc1c5",
       "name": "Gmail Trigger",
       "credentials": {
         "gmailOAuth2": {
-          "id": "a5dkTdtPhTBYAdUi",
-          "name": "Gmail account"
+          "id": "h6BKfyxrys2ttzlb",
+          "name": "Gmail OAuth2 API"
         }
       }
     },
@@ -39,7 +39,7 @@
           "conditions": [
             {
               "id": "15d94c23-67ba-4dee-9725-b67147fccae9",
-              "leftValue": "={{ $json.From.includes(\"no reply\") }}",
+              "leftValue": "={{ $json.From.includes(\"noreply\") }}",
               "rightValue": "true",
               "operator": {
                 "type": "boolean",
@@ -55,65 +55,69 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        208,
-        0
+        -208,
+        96
       ],
-      "id": "0a40ef99-4761-462d-94da-b1ffd7b75173",
+      "id": "031be564-ae1b-4242-b04d-41f08eae3030",
       "name": "If"
     },
     {
       "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "models/gemini-flash-latest",
-          "mode": "list",
-          "cachedResultName": "models/gemini-flash-latest"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Write a Reply for below Email\n\nSubject:  {{ $json.Subject }}\nBody: {{ $json.snippet }}\n\nOnly give Reply Text Nothing Before or After"
-            }
-          ]
-        },
-        "builtInTools": {},
+        "promptType": "define",
+        "text": "=Give reply to this email received\n\nFrom: {{ $json.From }}\nSubject: {{ $json.Subject }}\nBody: {{ $json.snippet }}",
+        "options": {
+          "systemMessage": "You are Zeeshan Ali Email Assistant, Who Manager his email replies "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "faa22639-8553-44c8-8bd7-8251e3ccf12f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.googleGemini",
-      "typeVersion": 1.1,
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
       "position": [
-        416,
-        -96
+        -16,
+        224
       ],
-      "id": "e3b05a72-45c0-451a-ae35-f62a633f9a93",
-      "name": "Message a model",
+      "id": "f116605e-ed02-4248-82a6-194709b87e6b",
+      "name": "Groq Chat Model",
       "credentials": {
-        "googlePalmApi": {
-          "id": "QJRCxcluSKG88alm",
-          "name": "Google Gemini(PaLM) Api account 6"
+        "groqApi": {
+          "id": "FDp3GmHSzWAfnBLN",
+          "name": "Groq account"
         }
       }
     },
     {
       "parameters": {
-        "operation": "reply",
-        "messageId": "={{ $('Gmail Trigger').item.json.threadId }}",
-        "message": "={{ $json.content.parts[0].text }}",
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
         "options": {}
       },
-      "type": "n8n-nodes-base.gmail",
+      "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.2,
       "position": [
-        768,
-        -96
+        240,
+        192
       ],
-      "id": "41f75c96-6dd8-41bc-a04d-bb51d58c5f97",
-      "name": "Reply to a message",
-      "webhookId": "a51710ef-f0ce-41ab-8f1c-9bcc79e038e6",
+      "id": "489c3eee-65f0-4772-b9d4-fd56c325a804",
+      "name": "Send a message in Gmail",
+      "webhookId": "972d6e05-edbf-43b5-9aaa-0cc08d193a85",
       "credentials": {
         "gmailOAuth2": {
-          "id": "a5dkTdtPhTBYAdUi",
-          "name": "Gmail account"
+          "id": "h6BKfyxrys2ttzlb",
+          "name": "Gmail OAuth2 API"
         }
       }
     }
@@ -135,35 +139,47 @@
       "main": [
         [
           {
-            "node": "Message a model",
+            "node": "AI Agent",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Message a model": {
-      "main": [
+    "Groq Chat Model": {
+      "ai_languageModel": [
         [
           {
-            "node": "Reply to a message",
-            "type": "main",
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "2bf849be-ae15-4cad-ac34-75a7d9befa94",
+  "versionId": "23576b15-9d5a-4aa8-bf85-977b37fbfadf",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "4a9e93f184ab8cffe5b1408d81b980c3ac3b7d5ba12680c58f8f90e349f28482"
+    "instanceId": "473940c2c360130e9999344641e445eb5b2de78a4e0357d83ef4222188036ac5"
   },
-  "id": "knA8dgVIbdB6rrJe",
+  "nodeGroups": [],
+  "id": "iFw3q2bYmAiV04up",
   "tags": []
 }
