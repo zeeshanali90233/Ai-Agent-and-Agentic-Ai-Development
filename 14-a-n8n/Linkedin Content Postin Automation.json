@@ -1,0 +1,213 @@
+{
+  "name": "My workflow 8",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d4d6aff0-e731-4abe-9a8f-c4fa7a538d2c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1coBE8h9fdKBKVMiNqDf5L87a_srLGTcqB6L6k2WGHhQ",
+          "mode": "list",
+          "cachedResultName": "Linkedin Content",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1coBE8h9fdKBKVMiNqDf5L87a_srLGTcqB6L6k2WGHhQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1coBE8h9fdKBKVMiNqDf5L87a_srLGTcqB6L6k2WGHhQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Date",
+              "lookupValue": "={{ $now.toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8324bb58-d259-40c8-8230-a75f810cadb1",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hCL6dhDpxkar0wQv",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "options": {
+          "systemMessage": "Create a professional LinkedIn post based on the provided topic or content.\n\nRequirements:\n1. Generate an attention-grabbing title/headline at the top.\n2. Place the main post content below the title.\n3. Use proper spacing and formatting for readability.\n4. Keep paragraphs short and engaging.\n5. Use relevant emojis sparingly where appropriate.\n6. End with a call-to-action or thought-provoking question.\n7. Optimize the post for LinkedIn engagement and professional audiences.\n8. Do not include hashtags unless explicitly requested.\n\nOutput Format:\n\n[Title]\n\n[Blank Line]\n\n[Post Content with proper paragraph spacing]\n\n[Blank Line]\n\n[Call to Action / Question]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "29fa45dc-cc8a-4caa-9ccb-8e79ce9b04e4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "e236c391-819a-43eb-8df2-742b75d150ad",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "LBieiTFZZajDA4K0",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "models/imagen-4.0-generate-001",
+          "mode": "list",
+          "cachedResultName": "models/imagen-4.0-generate-001"
+        },
+        "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGeminiTool",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        208
+      ],
+      "id": "9ca64061-d340-4914-a8ce-f669d3583e69",
+      "name": "Generate an image in Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NxkBvIHyhVWZ1Ci1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "shareMediaCategory": "IMAGE",
+        "binaryPropertyName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Input_Binary_Field', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedInTool",
+      "typeVersion": 1,
+      "position": [
+        576,
+        208
+      ],
+      "id": "14f62027-2018-48c1-b87c-6393d6ab4f75",
+      "name": "Create a post in LinkedIn"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image in Google Gemini": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post in LinkedIn": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cffd4d73-71c0-4df6-8c9b-cb5b8091cfd1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cf78ca83ed40f85b7a1017a88004302fcb89a23117c16c986621edaca9b354b2"
+  },
+  "nodeGroups": [],
+  "id": "NsawzSj7Vh3kpi8T",
+  "tags": []
+}
