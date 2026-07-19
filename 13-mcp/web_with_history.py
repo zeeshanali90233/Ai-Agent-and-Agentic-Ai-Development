@@ -1,7 +1,6 @@
 import streamlit as st
 from agent import helpful_assistant
 
-
 st.title("Talk to Agent")
 st.write("This app demonstrates a conversational agent.")
 
