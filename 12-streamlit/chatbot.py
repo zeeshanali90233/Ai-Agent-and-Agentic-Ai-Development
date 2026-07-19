@@ -4,7 +4,7 @@ import streamlit as st
 from google import genai
 from google.genai import types
 
-client = genai.Client(api_key='AQ.Ab8RN6L_qYZP7yTHxpIHdmBIrN4bU8cRcdVMBUvMpjuHVdTSsw')
+client = genai.Client(api_key='APIKEy')
 
 st.title("Talk to Agent")
 st.write("This app demonstrates a conversational agent.")
