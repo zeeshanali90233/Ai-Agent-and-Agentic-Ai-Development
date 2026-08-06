@@ -1,10 +1,8 @@
 import streamlit as st
-
-
 from google import genai
 from google.genai import types
 
-client = genai.Client(api_key='APIKEy')
+client = genai.Client(api_key='AQ.Ab8RN6L_qYZP7yTHxpIHdmBIrN4bU8cRcdVMBUvMpjuHVdTSsw')
 
 st.title("Talk to Agent")
 st.write("This app demonstrates a conversational agent.")
@@ -13,7 +11,7 @@ user_input = st.text_input("Ask a question:")
 if st.button("Submit"):
     with st.spinner("Agent is thinking..."):
         response = client.models.generate_content(
-            model='gemini-3.5-flash', contents='Kia Mari Earning hogi',
+            model='gemini-3.5-flash', contents=user_input,
             config=types.GenerateContentConfig(
             system_instruction="""
         You are an Experienced Sales Women named Alexa, 

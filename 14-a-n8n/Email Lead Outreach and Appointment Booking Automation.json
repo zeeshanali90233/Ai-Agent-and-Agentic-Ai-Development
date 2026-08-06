@@ -1,0 +1,1153 @@
+{
+  "name": "Email Lead Outreach and Appointment Booking Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "01227e1b-e617-436d-bb86-69e2bbc10356",
+      "name": "Daily at 9 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk",
+          "mode": "list",
+          "cachedResultName": "USA Leads ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "d79e05c8-5f7c-4b4d-9a01-10ee9d73669e",
+      "name": "Read Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        304
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HFAoWOHkJirUwF0e",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json['Email Sent'] }}",
+              "rightValue": "YES",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              },
+              "id": "3d902761-2779-40a0-8bb4-12646b32320d"
+            },
+            {
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "id": "dae2f184-cb00-4588-a23c-1930cb23cc3e"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c6b56862-4161-4df1-8a87-143ff8169441",
+      "name": "Filter Unsent Leads",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        304
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d39083d0-b9ca-4382-b7be-43f94f5422a0",
+      "name": "Done Processing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You have a new lead to contact. Here are their details:\n\nLead Name: {{ $json.Name }}\nCompany: {{ $json.Company }}\nBusiness: {{ $json.Business }}\nEmail: {{ $json.Email }}\nPain Point: {{ $json['Issue or Pitch'] }}\n\nOur Product: We offer an AI-powered workflow automation platform that saves businesses 10+ hours per week by eliminating repetitive manual tasks.\n\n---\n\nSTEP 1 — Write a cold outreach email using this exact structure:\n\n1. HOOK (1–2 lines)\n   Open with a bold, pattern-interrupting statement that speaks directly to their pain point or industry reality. Make them stop and read.\n\n2. SANDWICH TECHNIQUE\n   - Top slice: Empathize with their specific struggle (reference their business/pain point)\n   - Filling: Introduce our solution naturally, with a specific result or benefit\n   - Bottom slice: Reinforce their potential outcome if they take action\n\n3. MEETING ASK\n   End with a soft, low-friction ask for a short meeting.\n   Do NOT use a Calendly link.\n   Instead, ask: \"Would you be open to a quick 15-minute call this week to explore if this could work for you?\"\n\nRules:\n- Under 180 words\n- Friendly, human tone — never robotic\n- Reference their specific industry or pain point\n- No Calendly link\n- Sign off: Zeeshan Ali | P2PClouds | p2pclouds@gmail.com\n\n---\n\nSTEP 2 — Use the Gmail Send Email tool to send this email to {{ $json.Email }} with a compelling, personalized subject line.\nIn Last also Update lead in Sheet",
+        "options": {
+          "systemMessage": "You are a world-class B2B sales AI agent specializing in cold email outreach. Your job is to write and send highly personalized cold emails to leads using proven copywriting frameworks.\n\nYou always write emails that feel human, warm, and specific — never robotic or generic. You follow the exact structure given to you and never skip steps."
+        }
+      },
+      "id": "975012f3-87d3-40a9-a877-41146f334f32",
+      "name": "Outreach Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        960,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "id": "212ca9e8-a46b-4c50-8e3d-6bf2e4482882",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        896,
+        416
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "w3kgLI52x0mkAjM6",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('recipient', 'Email address of the recipient') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('subject', 'Email subject line') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `Full formatted HTML email body content`, 'string') }}",
+        "options": {}
+      },
+      "id": "abbb88e3-974c-45cc-94b8-2ff682aea2c0",
+      "name": "Gmail Send Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        416
+      ],
+      "webhookId": "49e07e46-9eaa-43f0-b68a-d1f14aa2896f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJCJ0TC3DdE1NumO",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk",
+          "mode": "list",
+          "cachedResultName": "USA Leads ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sr#": "={{ $json['Sr#'] }}",
+            "Email Sent": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email_Sent', `Yes or No `, 'string') }}"
+          },
+          "matchingColumns": [
+            "Sr#"
+          ],
+          "schema": [
+            {
+              "id": "Sr#",
+              "displayName": "Sr#",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company Name ",
+              "displayName": "Company Name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Business",
+              "displayName": "Company Business",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Issue or Pitch",
+              "displayName": "Issue or Pitch",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ffbbe548-7cc8-4855-ab15-ce0908724633",
+      "name": "Google Sheets Update Sent Status",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1152,
+        416
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HFAoWOHkJirUwF0e",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "id": "d62ef197-70d3-4061-b68b-5d2472a1d2d5",
+      "name": "Wait 15 Seconds",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        416
+      ],
+      "webhookId": "ee72c4c9-c6b2-4cbf-a623-129ba036db59"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3642033c-8780-45d2-b220-7e827830b1d2",
+      "name": "Loop Over Leads",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        672,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "id": "6907908f-6ab5-4e9d-a193-2245981c84f3",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        752
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJCJ0TC3DdE1NumO",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  let fromField = item.json.from || '';\n  \n  // Handle if from is an object or array\n  if (typeof fromField === 'object') {\n    fromField = fromField?.email || fromField?.value?.[0]?.address || JSON.stringify(fromField);\n  }\n  \n  // Now safely convert to string\n  fromField = String(fromField);\n  \n  const emailMatch = fromField.match(/<(.+?)>/);\n  const senderEmail = emailMatch ? emailMatch[1] : fromField.trim();\n  \n  results.push({\n    json: {\n      threadId: item.json.threadId,\n      messageId: item.json.id,\n      senderEmail: senderEmail.toLowerCase().trim(),\n      replyBody: item.json.text || item.json.snippet || '',\n      subject: item.json.subject || ''\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "9db4cce1-fd7e-4d50-8399-4f7b95065f05",
+      "name": "Extract Reply Info",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk",
+          "mode": "list",
+          "cachedResultName": "USA Leads ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "c6c41de6-cb8b-4f0d-bd16-c1f853176029",
+      "name": "Read Google Sheet for Match",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        752
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HFAoWOHkJirUwF0e",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const replyData = $('Extract Reply Info').first().json;\nconst leads = $input.all();\n\nconst matchedLead = leads.find(item => item.json.Email === replyData.senderEmail);\n\nif (!matchedLead) {\n  return [{ json: { found: false } }];\n}\n\nreturn [{\n  json: {\n    found: true,\n    name: matchedLead.json.Name,\n    company: matchedLead.json.Company,\n    business: matchedLead.json.Business,\n    issueorpitch: matchedLead.json[\"Issue or Pitch\"],\n    email: matchedLead.json.Email,\n    threadId: replyData.threadId,\n    messageId: replyData.messageId,\n    replyBody: replyData.replyBody,\n    subject: replyData.subject\n  }\n}];"
+      },
+      "id": "a5a8a325-3810-48a3-8fc9-1855eadeb9bc",
+      "name": "Match Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              },
+              "id": "7e172a72-5a46-40b5-a992-b72f5abbf9e3"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8407f2cf-757f-402d-bd5c-58b3286380d7",
+      "name": "Check If Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=A lead has replied to your outreach email. Here are all the details:\n\nLEAD PROFILE:\nName: {{ $json.name }}\nCompany: {{ $json.company }}\nBusiness: {{ $json.business }}\nIssue or Pitch: {{ $json.issueorpitch }}\nEmail: {{ $json.email }}\nGmail Thread ID: {{ $json.threadId }}\nOriginal Message ID: {{ $json.messageId }}\n\nTHEIR REPLY:\n{{ $json.replyBody }}\n\n---\n\nFollow these steps exactly:\n\nSTEP 1 — CLASSIFY their reply intent as one of:\nINTERESTED / WANTS_MEETING / OBJECTION / NOT_INTERESTED / QUESTION\n\n---\n\nSTEP 2 — WRITE A CONVINCING REPLY based on the classification:\n\n- INTERESTED:\n  Express genuine excitement. Tell them a quick 15-minute call is all it \n  takes to see if this is a fit. Ask them directly: \"What days work best \n  for you this week?\" Make it feel effortless to say yes.\n\n- WANTS_MEETING:\n  Confirm enthusiasm, suggest 2–3 specific day options this week \n  (e.g., \"Tuesday or Wednesday afternoon?\"), and ask them to pick \n  what works. Keep it warm and easy.\n\n- OBJECTION:\n  Acknowledge their concern with empathy — never argue. Reframe the \n  value in one sentence tied to their specific pain point. Then offer \n  a no-pressure ask: \"Even 15 minutes, no pitch — just a quick look \n  at whether this solves what you're dealing with. Worth it?\"\n\n- QUESTION:\n  Answer clearly and specifically. Tie the answer back to their pain \n  point. End by asking: \"Would a quick call this week make sense to \n  go deeper on this?\"\n\n- NOT_INTERESTED:\n  Thank them warmly and gracefully. Leave the door open: \n  \"Totally understand — if anything shifts down the road, I'm here.\" \n  No hard push. End on a positive note.\n\nRules:\n- Under 120 words\n- Friendly, conversational, human tone\n- NO Calendly link — ask for their availability instead\n- Sign off: Zeeshan Ali | P2PClouds\n\n---\n\nSTEP 3 — Use the Gmail Reply Tool to send your reply to \nthread ID {{ $json.threadId }} and message ID {{ $json.messageId }}\n\n---\n\nSTEP 4 — MEETING CONFIRMATION CHECK:\nOnly perform this step if the lead's reply CONFIRMS a meeting \n(classification = WANTS_MEETING and they gave a specific date/time, \nOR they explicitly said yes to a meeting time you proposed).\n\nIf meeting IS confirmed → Use the Excel/Google Sheets Update Tool with:\n- email: {{ $json.email }}\n- name: {{ $json.name }}\n- company: {{ $json.company }}\n- meeting_confirmed: YES\n- meeting_date: [date extracted from their reply in YYYY-MM-DD format]\n- meeting_time: [time extracted from their reply]\n\nIf meeting is NOT confirmed → Skip STEP 4 entirely. Do not log anything.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a world-class B2B sales AI agent handling warm reply conversations. \nYour job is to read a lead's reply, understand their intent, and respond in \na way that feels human, empathetic, and persuasive — always steering toward \nbooking a meeting. You never use Calendly links, Never start with Hi or greetings and reply in formatted syled html body. You convince through value, \nnot pressure."
+        }
+      },
+      "id": "f433c4c2-8f35-4b0d-8be1-39e11bca8775",
+      "name": "Reply Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1248,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "id": "3da04957-c0de-4695-9e65-b2740dcc83bb",
+      "name": "Groq Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        976
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "w3kgLI52x0mkAjM6",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('messageId', 'The Gmail message ID to reply to') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `Full formatted styled HTML reply message content`, 'string') }}",
+        "options": {}
+      },
+      "id": "6a8be021-8846-45ed-a0b1-2d7bc77666c2",
+      "name": "Gmail Reply Tool",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        976
+      ],
+      "webhookId": "a5dbd948-e672-495e-a8e4-9a1d974383c0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJCJ0TC3DdE1NumO",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk",
+          "mode": "list",
+          "cachedResultName": "USA Leads ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jr1RQDibYGSeSFlDfJu0gnPxTtnlTjBSQLkAhD0VHGk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "reply_received": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('reply_received', 'Reply received status (YES)') }}",
+            "last_reply_date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('last_reply_date', 'Date of last reply (YYYY-MM-DD)') }}",
+            "ai_reply_sent": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ai_reply_sent', 'AI reply sent status (YES)') }}",
+            "ai_reply_preview": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ai_reply_preview', 'First 100 characters of AI reply') }}",
+            "gmail_thread_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('gmail_thread_id', 'Gmail thread ID') }}",
+            "Email": "={{ $json.email }}",
+            "stage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('stage', `Lead Stage Whether it is Pre Mature, Positive, Mature, Converted etc`, 'string') }}",
+            "meeting confimed": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('meeting_confimed', `Meeting Confirmed Yes or No `, 'string') }}",
+            "meeting date and time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('meeting_date_and_time', `If COnfirmed then its Date and Time`, 'string') }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Sr#",
+              "displayName": "Sr#",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Business",
+              "displayName": "Business",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Issue or Pitch",
+              "displayName": "Issue or Pitch",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "reply_received",
+              "displayName": "reply_received",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_reply_date",
+              "displayName": "last_reply_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ai_reply_sent",
+              "displayName": "ai_reply_sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ai_reply_preview",
+              "displayName": "ai_reply_preview",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "gmail_thread_id",
+              "displayName": "gmail_thread_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "stage",
+              "displayName": "stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "meeting confimed",
+              "displayName": "meeting confimed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "meeting date and time",
+              "displayName": "meeting date and time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "db052742-f8a9-4124-ba71-797d3e5563f8",
+      "name": "Google Sheets Update Reply Status",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        976
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HFAoWOHkJirUwF0e",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"label\": \"Interested\"\n}"
+      },
+      "id": "169b0219-9eab-4a6b-8e32-8582cf8995ea",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1504,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "returnAll": true
+      },
+      "id": "d529a8af-e009-485a-b33f-dc301d261f2b",
+      "name": "Get many labels",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        752
+      ],
+      "webhookId": "4d213e0c-f788-4f4d-b47c-6141d3c0635a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJCJ0TC3DdE1NumO",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const labels = $input.all();\nconst targetLabel = String($('Reply Agent').first().json.output.label || '').trim();\nconst threadId = $('Match Lead').first().json.threadId;\n\nconst match = labels.find(l => String(l.json.name || '').toLowerCase() === targetLabel.toLowerCase());\n\nreturn [{\n  json: {\n    labelName: targetLabel,\n    threadId: threadId,\n    exists: !!match,\n    labelId: match ? match.json.id : null\n  }\n}];"
+      },
+      "id": "087c6b62-f092-42e1-8d18-d5a354bc7d0c",
+      "name": "Check Label Exists",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8eee09db-46cc-4957-849f-f3f91070e0af",
+              "leftValue": "={{ $json.exists }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e4fcd5ee-8070-4933-9f14-c5bd1958d5c0",
+      "name": "Label Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2160,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "={{ $json.labelId }}"
+        ]
+      },
+      "id": "77a6666d-2862-4ca6-9c86-b8bb40aa67bf",
+      "name": "Add Existing Label to Thread",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2384,
+        656
+      ],
+      "webhookId": "842e3b07-9b81-404e-8bfd-d3b943ff5f4a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJCJ0TC3DdE1NumO",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "operation": "create",
+        "name": "={{ $json.labelName }}",
+        "options": {}
+      },
+      "id": "fabb15bd-5aa4-4c95-9045-558f1aa0894b",
+      "name": "Create a label",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2384,
+        848
+      ],
+      "webhookId": "cdd07f17-631d-4094-959b-e93600ce46fa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJCJ0TC3DdE1NumO",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $('Check Label Exists').item.json.threadId }}",
+        "labelIds": [
+          "={{ $json.id }}"
+        ]
+      },
+      "id": "2058ae58-9037-45d2-838a-00a4ba31e1ac",
+      "name": "Add New Label to Thread",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2608,
+        848
+      ],
+      "webhookId": "a154a1a8-5b03-45ce-a2b3-5a80a001b696",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJCJ0TC3DdE1NumO",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily at 9 AM": {
+      "main": [
+        [
+          {
+            "node": "Read Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter Unsent Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Unsent Leads": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outreach Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait 15 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Outreach Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Outreach Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Update Sent Status": {
+      "ai_tool": [
+        [
+          {
+            "node": "Outreach Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 15 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Leads": {
+      "main": [
+        [
+          {
+            "node": "Done Processing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Outreach Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract Reply Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Reply Info": {
+      "main": [
+        [
+          {
+            "node": "Read Google Sheet for Match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Sheet for Match": {
+      "main": [
+        [
+          {
+            "node": "Match Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Lead": {
+      "main": [
+        [
+          {
+            "node": "Check If Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Found": {
+      "main": [
+        [
+          {
+            "node": "Reply Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Agent": {
+      "main": [
+        [
+          {
+            "node": "Get many labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Reply Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Reply Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Reply Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Update Reply Status": {
+      "ai_tool": [
+        [
+          {
+            "node": "Reply Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Reply Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many labels": {
+      "main": [
+        [
+          {
+            "node": "Check Label Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Label Exists": {
+      "main": [
+        [
+          {
+            "node": "Label Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Exists?": {
+      "main": [
+        [
+          {
+            "node": "Add Existing Label to Thread",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a label": {
+      "main": [
+        [
+          {
+            "node": "Add New Label to Thread",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "bf858188-3f65-45c8-813b-5a1486b6e18e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3f811adcda7c9dbb2efad081de8063c20dc18bfebfd41467ad986fc7cbbcb7ab"
+  },
+  "nodeGroups": [],
+  "id": "gKV0mmsVhpt0ul8a",
+  "tags": []
+}
