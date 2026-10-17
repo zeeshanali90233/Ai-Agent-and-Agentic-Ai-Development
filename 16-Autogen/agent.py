@@ -20,27 +20,6 @@ model_client = OpenAIChatCompletionClient(
     },
 )
 
-import asyncio
-import os
-from dotenv import load_dotenv
-from autogen_agentchat.agents import AssistantAgent
-from autogen_ext.models.openai import OpenAIChatCompletionClient
-
-load_dotenv()
-
-model_client = OpenAIChatCompletionClient(
-    model="gemini-2.5-flash",
-    api_key="AQ.Ab8RN6K3fHGzAIui87b6bjU191-dPdobH-rBKlzi6IKN4oiGuA",
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-    model_info={
-        "vision": True,
-        "function_calling": True,
-        "json_output": True,
-        "structured_output": True,
-        "family": "unknown",
-    },
-)
-
 async def get_weather(city: str) -> str:
     """Get the weather for a given city."""
     return f"The weather in {city} is 73 degrees and Sunny."
