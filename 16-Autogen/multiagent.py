@@ -1,7 +1,5 @@
-import ast
 import asyncio
 import datetime
-import operator
 import sys
 
 import httpx
@@ -17,14 +15,14 @@ from urllib.parse import quote
 load_dotenv()
 
 model_client = OpenAIChatCompletionClient(
-    model="gemini-2.5-flash",
+    model="openai/gpt-oss-120b",
     api_key="API_KEY",
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    base_url="https://api.groq.com/openai/v1",
     model_info={
-        "vision": True,
+        "vision": False,
         "function_calling": True,
         "json_output": True,
-        "structured_output": True,
+        "structured_output": False,
         "family": "unknown",
     },
 )

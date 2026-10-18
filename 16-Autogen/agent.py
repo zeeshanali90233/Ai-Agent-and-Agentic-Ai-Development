@@ -1,23 +1,12 @@
 import asyncio
-import os
-from dotenv import load_dotenv
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_agentchat.ui import Console
 
-load_dotenv()
-
+# Use GROQ
 model_client = OpenAIChatCompletionClient(
-    model="gemini-2.5-flash",
-    api_key="API_KEY",
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-    model_info={
-        "vision": True,
-        "function_calling": True,
-        "json_output": True,
-        "structured_output": True,
-        "family": "unknown",
-    },
+   model="openai"
+   
 )
 
 async def get_weather(city: str) -> str:
